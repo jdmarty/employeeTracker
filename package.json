@@ -1,0 +1,23 @@
+{
+  "name": "employee_tracker",
+  "version": "1.0.0",
+  "description": "Command line application that tracks employees by department, role, manager, and salary",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdmarty/employeeTracker.git"
+  },
+  "author": "Joshua Marty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jdmarty/employeeTracker/issues"
+  },
+  "homepage": "https://github.com/jdmarty/employeeTracker#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
