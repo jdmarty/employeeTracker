@@ -14,13 +14,17 @@ class Select {
     );
   }
 
-  searchByDepartment(selector) {
-    return this.all() + ` WHERE ${this.byDepartment} = '${selector}'`;
+  searchByDepartment() {
+    return this.searchAll() + " WHERE department.name = ?";
+  }
+
+  searchByRole(selector) {
+    return this.searchAll() + " WHERE role.title = ?";
   }
 
   searchByManager(selector) {
-    return this.all() + ` WHERE ${this.byManager} = '${selector}'`;
+    return this.searchAll() + " WHERE CONCAT(m.first_name,' ',m.last_name)";
   }
 }
 
-module.exports = Select
+module.exports = Select;
