@@ -1,3 +1,5 @@
+const connection = require("../config/connection");
+
 const mainMenu = [
   {
     name: "mainSelection",
@@ -14,7 +16,8 @@ const mainMenu = [
       "Remove an Employee",
       "Update Employee Role",
       "Update Employee Manager",
-      "View Utilized Budget by Department"
+      "View Utilized Budget by Department",
+      "EXIT"
     ],
   },
 ];
