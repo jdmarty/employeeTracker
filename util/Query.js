@@ -1,9 +1,5 @@
-class Select {
-  constructor() {
-    (this.byDepartment = "department.name"),
-      (this.byRole = "role.title"),
-      (this.byManager = "CONCAT(m.first_name,' ',m.last_name)");
-  }
+class Query {
+  constructor() {}
   searchAll() {
     return (
       "SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', role.title AS Title, department.name AS Department, CONCAT(m.first_name,' ',m.last_name) AS Manager, role.salary AS Salary " +
@@ -25,6 +21,14 @@ class Select {
   searchByManager(selector) {
     return this.searchAll() + " WHERE CONCAT(m.first_name,' ',m.last_name)";
   }
+
+  addEmployee() {
+    return "INSERT INTO employee SET ?";
+  }
+
+  addRole() {
+      return "INSERT INTO role SET ?";
+  }
 }
 
-module.exports = Select;
+module.exports = Query;

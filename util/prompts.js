@@ -1,5 +1,3 @@
-const connection = require("../config/connection");
-
 const mainMenu = [
   {
     name: "mainSelection",
@@ -49,7 +47,15 @@ const rolesMenu = [
   }
 ];
 
-const addEmployee = [
+const confirmAdd = [
+  {
+    name: "proceed",
+    type: "confirm",
+    message: "Does the above information look correct?"
+  }
+]
+
+const addEmployeeMenu = [
   {
     name: "first_name",
     type: "input",
@@ -70,16 +76,36 @@ const addEmployee = [
     name: "manager",
     type: "list",
     message: "Select a manager",
-    choices: ['None']
+    choices: null
   }
-]
+];
 
-
+const addRoleMenu = [
+  {
+    name: "title",
+    type: "input",
+    message: "Enter new role title"
+  },
+  {
+    name: "salary",
+    type: "input",
+    message: "Enter salary for this position",
+    validate: val => parseFloat(val) !== NaN
+  },
+  {
+    name: "department",
+    type: "list",
+    message: "Select a department",
+    choices: null
+  }
+];
 
 module.exports = {
   mainMenu,
   departmentsMenu,
   managersMenu,
   rolesMenu,
-  addEmployee
+  confirmAdd,
+  addEmployeeMenu,
+  addRoleMenu
 };
