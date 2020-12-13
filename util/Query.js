@@ -19,7 +19,7 @@ class Query {
   }
 
   searchByManager(selector) {
-    return this.searchAll() + " WHERE CONCAT(m.first_name,' ',m.last_name)";
+    return this.searchAll() + " WHERE CONCAT(m.first_name,' ',m.last_name) = ?";
   }
 
   addEmployee() {

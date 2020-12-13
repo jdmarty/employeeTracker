@@ -6,14 +6,7 @@ const mysql = require("mysql");
 const connection = require("./config/connection");
 
 //utilities
-const {
-  mainMenu,
-  departmentsMenu,
-  managersMenu,
-  rolesMenu,
-  confirmAdd,
-  addEmployeeMenu,
-  addRoleMenu } = require("./util/prompts");
+const Prompt = require("./util/prompts");
 
 const Query = require("./util/Query");
 
@@ -35,47 +28,44 @@ async function selectMenuOption() {
   getEmployees();
   getDepartments();
   getRoles();
-  const { mainSelection } = await inquirer.prompt(mainMenu);
-  let query
-  switch (mainSelection) {
+  const { main } = await inquirer.prompt(new Prompt().mainMenu());
+  const Menus = new Prompt(currentEmployees, currentDepartments, currentRoles );
+  const Queries = new Query();
+  switch (main) {
     case "View All Employees":
-      query = new Query().searchAll();
+      query = Queries.searchAll();
       runQuery(query, null, selectMenuOption);
       return;
     case "View Employees by Department":
-      departmentsMenu[0].choices = currentDepartments;
-      const { department } = await inquirer.prompt(departmentsMenu);
-      query = new Query().searchByDepartment();
+      const { department } = await inquirer.prompt(Menus.departmentsMenu());
+      query = Queries.searchByDepartment();
       runQuery(query, [department], selectMenuOption);
       return;
     case "View Employees by Role":
-      rolesMenu[0].choices = currentRoles;
-      const { role } = await inquirer.prompt(rolesMenu);
-      query = new Query().searchByRole();
+      const { role } = await inquirer.prompt(Menus.rolesMenu());
+      query = Queries.searchByRole();
       runQuery(query, [role], selectMenuOption);
       return;
     case "View Employees by Manager":
-      managersMenu[0].choices = currentEmployees;
-      const { manager } = await inquirer.prompt(managersMenu);
-      query = new Query().searchByManager();
+      const { manager } = await inquirer.prompt(Menus.managersMenu());
+      query = Queries.searchByManager();
       runQuery(query, [manager], selectMenuOption);
       return;
     case "Add an Employee":
-      addEmployeeMenu[2].choices = currentRoles;
-      addEmployeeMenu[3].choices = currentEmployees.concat(["None"]);
-      const employeeOptions = await inquirer.prompt(addEmployeeMenu);
-      const { proceed } = await inquirer.prompt(confirmAdd);
-      if (!proceed) return selectMenuOption();
-      query = new Query().addEmployee();
+      const employeeOptions = await inquirer.prompt(Menus.addEmployee());
+      const { proceed: goAddEmp } = await inquirer.prompt(Menus.confirmAdd());
+      if (!goAddEmp) return selectMenuOption();
+      query = Queries.addEmployee();
       runQuery(query, parseAddEmployee(employeeOptions), selectMenuOption);
       return;
     case "Add a Role":
-      const roleOptions = await inquirer.prompt(addRoleMenu);
-      query = new Query().addRole();
-      const { proceed } = await inquirer.prompt(confirmAdd);
-      if (!proceed) return selectMenuOption();
+      const roleOptions = await inquirer.prompt(Menus.addRole());
+      query = Queries.addRole();
+      const { proceed: goAddRole } = await inquirer.prompt(confirmAdd);
+      if (!goAddRole) return selectMenuOption();
       runQuery(query, parseAddRole(roleOptions), selectMenuOption);
       selectMenuOption();
+      return;
     default:
       connection.end();
       return;
@@ -87,6 +77,7 @@ function parseAddEmployee(source) {
     let newRoleId = currentRoles.findIndex(el => el === source.role) + 1;
     if (newRoleId === 0) newRoleId = null;
     let newManagerId = currentEmployees.findIndex(el => el === source.manager) + 1;
+    if (newManagerId === 0) newManagerId = null;
     return {
         first_name: source.first_name,
         last_name: source.last_name,
@@ -97,7 +88,7 @@ function parseAddEmployee(source) {
 
 //function to parse addRole response into an object for connection.query
 function parseAddRole(source) {
-    let newDeptId = currentDepartments.findIndex(el => el === source.role) + 1;
+    let newDeptId = currentDepartments.findIndex(el => el === source.department) + 1;
     if (newDeptId === 0) newDeptId = null;
     return {
         title: source.title,

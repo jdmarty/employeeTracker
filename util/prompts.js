@@ -1,111 +1,125 @@
-const mainMenu = [
-  {
-    name: "mainSelection",
-    type: "list",
-    message: "What would you like to do?",
-    choices: [
-      "View All Employees",
-      "View Employees by Department",
-      "View Employees by Role",
-      "View Employees by Manager",
-      "Add an Employee",
-      "Add a Role",
-      "Add a Department",
-      "Remove an Employee",
-      "Update Employee Role",
-      "Update Employee Manager",
-      "View Utilized Budget by Department",
-      "EXIT"
-    ],
-  },
-];
-
-const departmentsMenu = [
-  {
-    name: "department",
-    type: "list",
-    message: "Select a department",
-    choices: null
+class Prompt {
+  constructor(employees, departments, roles) {
+    this.employees = employees;
+    this.departments = departments;
+    this.roles = roles;
   }
-];
 
-const managersMenu = [
-  {
-    name: "manager",
-    type: "list",
-    message: "Select a manager",
-    choices: null
+  mainMenu() {
+    return [
+      {
+        name: "main",
+        type: "list",
+        message: "What would you like to do?",
+        choices: [
+          "View All Employees",
+          "View Employees by Department",
+          "View Employees by Role",
+          "View Employees by Manager",
+          "Add an Employee",
+          "Add a Role",
+          "Add a Department",
+          "Remove an Employee",
+          "Update Employee Role",
+          "Update Employee Manager",
+          "View Utilized Budget by Department",
+          "EXIT",
+        ],
+      },
+    ];
   }
-];
 
-const rolesMenu = [
-  {
-    name: "role",
-    type: "list",
-    message: "Select a role",
-    choices: null
+  departmentsMenu() {
+    return [
+      {
+        name: "department",
+        type: "list",
+        message: "Select a department",
+        choices: this.departments,
+      },
+    ];
   }
-];
 
-const confirmAdd = [
-  {
-    name: "proceed",
-    type: "confirm",
-    message: "Does the above information look correct?"
+  managersMenu() {
+    return [
+      {
+        name: "manager",
+        type: "list",
+        message: "Select a manager",
+        choices: this.employees,
+      },
+    ];
   }
-]
 
-const addEmployeeMenu = [
-  {
-    name: "first_name",
-    type: "input",
-    message: "Enter employee first name"
-  },
-  {
-    name: "last_name",
-    type: "input",
-    message: "Enter employee last name"
-  },
-  {
-    name: "role",
-    type: "list",
-    message: "Select a role",
-    choices: null
-  },
-  {
-    name: "manager",
-    type: "list",
-    message: "Select a manager",
-    choices: null
+  rolesMenu() {
+    return [
+      {
+        name: "role",
+        type: "list",
+        message: "Select a role",
+        choices: this.roles,
+      },
+    ];
   }
-];
 
-const addRoleMenu = [
-  {
-    name: "title",
-    type: "input",
-    message: "Enter new role title"
-  },
-  {
-    name: "salary",
-    type: "input",
-    message: "Enter salary for this position",
-    validate: val => parseFloat(val) !== NaN
-  },
-  {
-    name: "department",
-    type: "list",
-    message: "Select a department",
-    choices: null
+  confirmAdd() {
+    return [
+      {
+        name: "proceed",
+        type: "confirm",
+        message: "Does the above information look correct?",
+      },
+    ];
   }
-];
 
-module.exports = {
-  mainMenu,
-  departmentsMenu,
-  managersMenu,
-  rolesMenu,
-  confirmAdd,
-  addEmployeeMenu,
-  addRoleMenu
-};
+  addEmployee() {
+    return [
+      {
+        name: "first_name",
+        type: "input",
+        message: "Enter employee first name",
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "Enter employee last name",
+      },
+      {
+        name: "role",
+        type: "list",
+        message: "Select a role",
+        choices: this.roles,
+      },
+      {
+        name: "manager",
+        type: "list",
+        message: "Select a manager",
+        choices: this.employees,
+      },
+    ];
+  }
+
+  addRole() {
+    return [
+      {
+        name: "title",
+        type: "input",
+        message: "Enter new role title",
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "Enter salary for this position",
+        validate: (val) => parseFloat(val) !== NaN,
+      },
+      {
+        name: "department",
+        type: "list",
+        message: "Select a department",
+        choices: this.departments,
+      },
+    ];
+  }
+}
+
+module.exports = Prompt;
