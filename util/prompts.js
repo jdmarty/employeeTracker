@@ -96,7 +96,7 @@ class Prompt {
         message: "Enter employee last name",
       },
       this.rolesMenu()[0],
-      this.managersMenu([0]),
+      this.managersMenu()[0],
     ];
   }
 

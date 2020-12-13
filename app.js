@@ -29,6 +29,7 @@ async function selectMenuOption() {
   const Queries = new Query();
   //Pull out the menu selection for switchboard
   const { main } = await inquirer.prompt(Menus.mainMenu());
+  let query, selections, proceed
   //Switchboard for main menu
   switch (main) {
     case "View All Employees":
@@ -51,58 +52,55 @@ async function selectMenuOption() {
       runQuery(query, [manager], updateApp);
       return;
     case "Add an Employee":
-      const employeeOptions = await inquirer.prompt(Menus.addEmployee());
-      const { proceed: goAddEmployee } = await inquirer.prompt(Menus.confirm());
-      if (!goAddEmployee) {
-        return selectMenuOption();
-      }
-      query = Queries.addEmployee();
-      runQuery(query, parseAddEmployee(employeeOptions), updateApp);
+      selections = await inquirer.prompt(Menus.addEmployee());
+      await confirm(Menus);
+      query = Queries.add('employee');
+      runQuery(query, parseAddEmployee(selections), updateApp);
       return;
     case "Add a Role":
-      const roleOptions = await inquirer.prompt(Menus.addRole());
-      query = Queries.addRole();
+      selections = await inquirer.prompt(Menus.addRole());
       const { proceed: goAddRole } = await inquirer.prompt(Menus.confirm());
       if (!goAddRole) {
         return selectMenuOption();
       }
-      runQuery(query, parseAddRole(roleOptions), updateApp);
+      query = Queries.add('role');
+      runQuery(query, parseAddRole(selections), updateApp);
       return;
     case "Add a Department":
-      const deptOptions = await inquirer.prompt(Menus.addDepartment());
-      query = Queries.addDepartment();
+      selections = await inquirer.prompt(Menus.addDepartment());
       const { proceed: goAddDept } = await inquirer.prompt(Menus.confirm());
       if (!goAddDept) {
         return selectMenuOption();
       }
-      runQuery(query, deptOptions, updateApp);
+      query = Queries.add('department');
+      runQuery(query, selections, updateApp);
       return;
     case "Remove an Employee":
-      const { employee } = await inquirer.prompt(Menus.employeesMenu());
-      query = Queries.removeEmployee();
+      selection = await inquirer.prompt(Menus.employeesMenu());
       const { proceed: goRemoveEmp } = await inquirer.prompt(Menus.confirm());
       if (!goRemoveEmp) {
         return selectMenuOption();
       }
-      runQuery(query, parseRemoveEmployee(employee), updateApp);
+      query = Queries.removeEmployee();
+      runQuery(query, parseRemoveEmployee(selection), updateApp);
       return;
     case "Update Employee Role":
-      const employeeUpdateRoleOptions = await inquirer.prompt(Menus.updateEmployeeRole());
-      query = Queries.updateEmployeeRole();
+      selections = await inquirer.prompt(Menus.updateEmployeeRole());
       const { proceed: goUpdateRole } = await inquirer.prompt(Menus.confirm());
       if (!goUpdateRole) {
         return selectMenuOption();
       }
-      runQuery(query, parseUpdateEmployeeRole(employeeUpdateRoleOptions), updateApp);
+      query = Queries.updateEmployeeRole();
+      runQuery(query, parseUpdateEmployeeRole(selections), updateApp);
       return;
     case "Update Employee Manager":
-      const employeeUpdateManagerOptions = await inquirer.prompt(Menus.updateEmployeeManager());
-      query = Queries.updateEmployeeManager();
+      selections = await inquirer.prompt(Menus.updateEmployeeManager());
       const { proceed: goUpdateManager } = await inquirer.prompt(Menus.confirm());
       if (!goUpdateManager) {
         return selectMenuOption();
       }
-      runQuery(query, parseUpdateEmployeeManager(employeeUpdateManagerOptions), updateApp);
+      query = Queries.updateEmployeeManager();
+      runQuery(query, parseUpdateEmployeeManager(selections), updateApp);
       return;
     case "View Utilized Budget by Department":
       const { department: utilDepartment } = await inquirer.prompt(Menus.departmentsMenu());
@@ -115,13 +113,42 @@ async function selectMenuOption() {
   }
 }
 
-//function to parse addEmployee response into query for connection.query
+//run a confirm prompt
+function confirm(Menus) {
+  return inquirer.prompt(Menus.confirm()).then(res => {
+    //if not confirmed, return to the main menu
+    return !res.proceed && selectMenuOption(); 
+  });
+}
+
+//find an employee id from the selected name
+function getEmployeeId(name) {
+  return currentEmployees.find(el => el.employee === name).id;
+}
+
+//find a role id from the selected name
+function getRoleId(name) {
+  return currentRoles.find(el => el.role === name).id;
+}
+
+//find a department id from the selected name
+function getDeptId(name) {
+  return currentDepartments.find(el => el.department === name).id;
+}
+
+//find a manager id from the selected name
+function getManagerId(name) {
+  const manager = currentEmployees.find((el) => el.employee === name);
+  return manager ? manager.id : null;
+}
+
+//parse add('employee') response into query for connection.query
 function parseAddEmployee(source) {
   //find the matching id for the selected role
-  const newRoleId = currentRoles.find((el) => el.role === source.role).id;
+  const newRoleId = getRoleId(source.role)
   //find the matching id for the selected manager
-  const newManager = currentEmployees.find((el) => el.employee === source.manager);
-  const newManagerId = newManager ? newManager.id : null;
+  const newManagerId = getManagerId(source.manager);
+  console.log(newManagerId);
   //return object to be used as selector in connection.query
   return {
     first_name: source.first_name,
@@ -131,11 +158,10 @@ function parseAddEmployee(source) {
   };
 }
 
-//function to parse addRole response into an object for connection.query
+//parse add('role') response into an object for connection.query
 function parseAddRole(source) {
   //find the matching id for the selected department
-  const newDept = currentDepartments.find((el) => el.department === source.department);
-  const newDeptId = newDept ? newDept.id : null;
+  const newDeptId = getDeptId(source.department)
   //return object to be used as selector in connection.query
   return {
     title: source.title,
@@ -144,28 +170,28 @@ function parseAddRole(source) {
   };
 }
 
-//function to parse removeEmployee response into a selector for connection.query
-function parseRemoveEmployee(employee) {
-  const targetEmployeeId = currentEmployees.find(el => el.employee === employee).id;
+//parse removeEmployee response into a selector for connection.query
+function parseRemoveEmployee(source) {
+  //find the matching id for the selected employee
+  const targetEmployeeId = getEmployeeId(source.employee);
   return [targetEmployeeId];
 }
 
 //function to parse updateEmployeeRole response into a selector for connection.query
 function parseUpdateEmployeeRole(source) {
-  const targetEmployeeId = currentEmployees.find(el => el.employee === source.employee).id;
-  const newRoleId = currentRoles.find((el) => el.role === source.role).id;
+  const targetEmployeeId = getEmployeeId(source.employee);
+  const newRoleId = getRoleId(source.role);
   return [newRoleId, targetEmployeeId];
 }
 
 //function to parse updateEmployeeManager response into a selector for connection.query
 function parseUpdateEmployeeManager(source) {
-  const targetEmployeeId = currentEmployees.find(el => el.employee === source.employee).id;
-  const newManager = currentEmployees.find((el) => el.employee === source.manager);
-  const newManagerId = newManager ? newManager.id : null;
+  const targetEmployeeId = getEmployeeId(source.employee);
+  const newManagerId = getManagerId(source.manager);
   return [newManagerId, targetEmployeeId];
 }
 
-//function to run a basic query
+//function to run a query
 function runQuery(query, selector, cb) {
   connection.query(query, selector, (err, res) => {
     if (err) throw err;
@@ -174,7 +200,7 @@ function runQuery(query, selector, cb) {
   });
 }
 
-//UPDATE APP CHAIN
+//UPDATE APP CHAIN--------------------------------------------
 //function to update app state to current database
 function updateApp() {
   getEmployees()
@@ -215,5 +241,5 @@ function getRoles() {
     }
   );
 }
-//----------------------------------------------------
+//---------------------------------------------------------
 

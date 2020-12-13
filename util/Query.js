@@ -34,6 +34,10 @@ class Query {
     return "INSERT INTO department SET ?";
   }
 
+  add(table) {
+    return `INSERT INTO ${table} SET ?`
+  }
+
   removeEmployee() {
     return "DELETE FROM employee WHERE id = ?";
   }
