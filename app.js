@@ -52,7 +52,8 @@ async function selectMenuOption() {
       return;
     case "Add an Employee":
       const employeeOptions = await inquirer.prompt(Menus.addEmployee());
-      if (!confirmPrompt()) {
+      const { proceed: goAddEmployee } = await inquirer.prompt(Menus.confirm());
+      if (!goAddEmployee) {
         return selectMenuOption();
       }
       query = Queries.addEmployee();
@@ -75,7 +76,7 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       runQuery(query, deptOptions, updateApp);
-      return
+      return;
     case "Remove an Employee":
       const { employee } = await inquirer.prompt(Menus.removeEmployee());
       query = Queries.removeEmployee();
@@ -84,10 +85,27 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       runQuery(query, parseRemoveEmployee(employee), updateApp);
+      return;
     case "Update Employee Role":
-      const { role: updatedRole } = await inquirer.prompt(Menus.updateEmployeeRole());
+      const employeeUpdateRoleOptions = await inquirer.prompt(Menus.updateEmployeeRole());
       query = Queries.updateEmployeeRole();
       const { proceed: goUpdateRole } = await inquirer.prompt(Menus.confirm());
+      if (!goUpdateRole) {
+        return selectMenuOption();
+      }
+      runQuery(query, parseUpdateEmployeeRole(employeeUpdateRoleOptions), updateApp);
+      return;
+    case "Update Employee Manager":
+      const employeeUpdateManagerOptions = await inquirer.prompt(Menus.updateEmployeeManager());
+      query = Queries.updateEmployeeManager();
+      const { proceed: goUpdateManager } = await inquirer.prompt(Menus.confirm());
+      if (!goUpdateManager) {
+        return selectMenuOption();
+      }
+      runQuery(query, parseUpdateEmployeeManager(employeeUpdateManagerOptions), updateApp);
+      return;
+    case "View Utilized Budget by Department":
+      const { department: departmentBudget } = await inquirer.prompt(Menus.departmentsMenu());
       return
     default:
       connection.end();
@@ -98,9 +116,8 @@ async function selectMenuOption() {
 //function to parse addEmployee response into query for connection.query
 function parseAddEmployee(source) {
   //find the matching id for the selected role
-  const newRole = currentRoles.find((el) => el.role === source.role);
-  const newRoleId = newRole ? newRole.id : null;
-  //find matching id for selected manager
+  const newRoleId = currentRoles.find((el) => el.role === source.role).id;
+  //find the matching id for the selected manager
   const newManager = currentEmployees.find((el) => el.employee === source.manager);
   const newManagerId = newManager ? newManager.id : null;
   //return object to be used as selector in connection.query
@@ -125,10 +142,25 @@ function parseAddRole(source) {
   };
 }
 
-//function to parse removeEmployee response in an selector for connection.query
+//function to parse removeEmployee response into a selector for connection.query
 function parseRemoveEmployee(employee) {
   const targetEmployeeId = currentEmployees.find(el => el.employee === employee).id;
   return [targetEmployeeId];
+}
+
+//function to parse updateEmployeeRole response into a selector for connection.query
+function parseUpdateEmployeeRole(source) {
+  const targetEmployeeId = currentEmployees.find(el => el.employee === source.employee).id;
+  const newRoleId = currentRoles.find((el) => el.role === source.role).id;
+  return [newRoleId, targetEmployeeId];
+}
+
+//function to parse updateEmployeeManager response into a selector for connection.query
+function parseUpdateEmployeeManager(source) {
+  const targetEmployeeId = currentEmployees.find(el => el.employee === source.employee).id;
+  const newManager = currentEmployees.find((el) => el.employee === source.manager);
+  const newManagerId = newManager ? newManager.id : null;
+  return [newManagerId, targetEmployeeId];
 }
 
 //function to run a basic query
@@ -138,13 +170,6 @@ function runQuery(query, selector, cb) {
     console.log(res);
     if (cb) cb();
   });
-}
-
-//function to run a confirm prompt
-async function confirmPrompt() {
-  const confirmPrompt = new Prompt([],[],[]).confirm();
-  const { proceed } = await inquirer(confirmPrompt);
-  return proceed;
 }
 
 //UPDATE APP CHAIN

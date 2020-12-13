@@ -157,6 +157,24 @@ class Prompt {
       }
     ];
   }
+
+  updateEmployeeManager() {
+    return [
+      {
+        name: "employee",
+        type: "list",
+        message: "Select an employee to update",
+        choices: this.employees,
+      },
+      {
+        name: "manager",
+        type: "list",
+        message: "Select a new manager for this employee",
+        choices: this.employees.concat(['None']),
+      },
+    ];
+  }
+
 }
 
 module.exports = Prompt;

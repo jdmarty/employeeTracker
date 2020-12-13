@@ -41,6 +41,10 @@ class Query {
   updateEmployeeRole() {
     return "UPDATE employee SET role_id = ? WHERE id = ?"
   }
+
+  updateEmployeeManager() {
+    return "UPDATE employee SET manager_id = ? WHERE id = ?"
+  }
 }
 
 module.exports = Query;
