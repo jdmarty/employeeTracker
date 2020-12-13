@@ -29,6 +29,10 @@ class Query {
   addRole() {
       return "INSERT INTO role SET ?";
   }
+
+  addDepartment() {
+    return "INSERT INTO department SET ?";
+  }
 }
 
 module.exports = Query;

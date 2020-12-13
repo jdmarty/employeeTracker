@@ -1,8 +1,8 @@
 class Prompt {
   constructor(employees, departments, roles) {
-    this.employees = employees;
-    this.departments = departments;
-    this.roles = roles;
+    this.employees = employees.map(row => row.employee);
+    this.departments = departments.map(row => row.department);
+    this.roles = roles.map(row => row.role);
   }
 
   mainMenu() {
@@ -67,7 +67,7 @@ class Prompt {
       {
         name: "proceed",
         type: "confirm",
-        message: "Does the above information look correct?",
+        message: "\nDoes the above information look correct?",
       },
     ];
   }
@@ -119,6 +119,16 @@ class Prompt {
         choices: this.departments,
       },
     ];
+  }
+
+  addDepartment() {
+    return [
+      {
+        name: "name",
+        type: "input",
+        message: "Enter new role title"
+      },
+    ]
   }
 }
 
