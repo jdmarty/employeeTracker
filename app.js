@@ -27,8 +27,8 @@ async function selectMenuOption() {
   //create Menus and Query classes
   const Menus = new Prompt(currentEmployees, currentDepartments, currentRoles);
   const Queries = new Query();
+  console.log("\n");
   //Pull out the menu selection for switchboard
-  console.log('\n');
   const { main } = await inquirer.prompt(Menus.mainMenu());
   let query, selections, proceed, message
   //Switchboard for main menu
@@ -145,12 +145,12 @@ async function selectMenuOption() {
 function runQuery(query, selector, cb, log) {
   connection.query(query, selector, (err, res) => {
     //Log error message
-    if (err) console.log(chalk.red('\n'+err.sqlMessage+'\n'));
+    if (err) console.log(chalk.red('\n'+err.sqlMessage));
     else {
       //Generate a table if an array is sent
       if (res.length) console.table(res);
       //log message if one is provided
-      if (log) console.log(chalk.green('\n'+log+'\n'));
+      if (log) console.log(chalk.green('\n'+log));
     }
     // run the call back message if one is provided
     if (cb) cb();
