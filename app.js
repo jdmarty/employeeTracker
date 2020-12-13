@@ -78,7 +78,7 @@ async function selectMenuOption() {
       runQuery(query, deptOptions, updateApp);
       return;
     case "Remove an Employee":
-      const { employee } = await inquirer.prompt(Menus.removeEmployee());
+      const { employee } = await inquirer.prompt(Menus.employeesMenu());
       query = Queries.removeEmployee();
       const { proceed: goRemoveEmp } = await inquirer.prompt(Menus.confirm());
       if (!goRemoveEmp) {

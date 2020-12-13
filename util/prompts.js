@@ -46,6 +46,17 @@ class Prompt {
         name: "manager",
         type: "list",
         message: "Select a manager",
+        choices: this.employees.concat(['None']),
+      },
+    ];
+  }
+
+  employeesMenu() {
+    return [
+      {
+        name: "employee",
+        type: "list",
+        message: "Select an employee",
         choices: this.employees,
       },
     ];
@@ -84,18 +95,8 @@ class Prompt {
         type: "input",
         message: "Enter employee last name",
       },
-      {
-        name: "role",
-        type: "list",
-        message: "Select a role",
-        choices: this.roles,
-      },
-      {
-        name: "manager",
-        type: "list",
-        message: "Select a manager",
-        choices: this.employees.concat(['None']),
-      },
+      this.rolesMenu()[0],
+      this.managersMenu([0]),
     ];
   }
 
@@ -111,12 +112,7 @@ class Prompt {
         type: "number",
         message: "Enter salary for this position",
       },
-      {
-        name: "department",
-        type: "list",
-        message: "Select a department",
-        choices: this.departments,
-      },
+      this.departmentsMenu()[0],
     ];
   }
 
@@ -130,48 +126,17 @@ class Prompt {
     ]
   }
 
-  removeEmployee() {
-    return [
-      {
-        name: "employee",
-        type: "list",
-        message: "Select an employee to remove",
-        choices: this.employees
-      }
-    ]
-  }
-
   updateEmployeeRole() {
     return [
-      {
-        name: "employee",
-        type: "list",
-        message: "Select an employee to update",
-        choices: this.employees,
-      },
-      {
-        name: "role",
-        type: "list",
-        message: "Select a new role for this employee",
-        choices: this.roles
-      }
+      this.employeesMenu()[0],
+      this.rolesMenu()[0]
     ];
   }
 
   updateEmployeeManager() {
     return [
-      {
-        name: "employee",
-        type: "list",
-        message: "Select an employee to update",
-        choices: this.employees,
-      },
-      {
-        name: "manager",
-        type: "list",
-        message: "Select a new manager for this employee",
-        choices: this.employees.concat(['None']),
-      },
+      this.employeesMenu()[0],
+      this.managersMenu()[0],
     ];
   }
 
