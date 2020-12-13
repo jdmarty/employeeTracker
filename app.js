@@ -22,7 +22,7 @@ connection.connect((err) => {
   updateApp();
 });
 
-//main menu switchboard
+//MAIN MENU SWITCHBOARD---------------------------------------------------------
 async function selectMenuOption() {
   //create Menus and Query classes
   const Menus = new Prompt(currentEmployees, currentDepartments, currentRoles);
@@ -34,95 +34,112 @@ async function selectMenuOption() {
   //Switchboard for main menu
   switch (main) {
     case "View All Employees":
+      //generate and run query
       query = Queries.searchAll();
       runQuery(query, null, selectMenuOption);
       return;
     case "View Employees by Department":
+      //pull out the department from the prompt response
       const { department } = await inquirer.prompt(Menus.departmentsMenu());
-      query = Queries.searchBy('department.name');
+      query = Queries.searchBy("department.name");
+      //generate and run query
       runQuery(query, [department], selectMenuOption);
       return;
     case "View Employees by Role":
+      //pull out the role from the prompt response
       const { role } = await inquirer.prompt(Menus.rolesMenu());
-      query = Queries.searchBy('role.title');
+      //generate and run query
+      query = Queries.searchBy("role.title");
       runQuery(query, [role], selectMenuOption);
       return;
     case "View Employees by Manager":
+      //pull out the role from the prompt response
       const { manager } = await inquirer.prompt(Menus.managersMenu());
+      //generate and run query
       query = Queries.searchBy("CONCAT(m.first_name,' ',m.last_name)");
       runQuery(query, [manager], selectMenuOption);
       return;
     case "Add an Employee":
+      //get user input
       selections = await inquirer.prompt(Menus.addEmployee());
-      proceed = await confirm(Menus);
-      if (!proceed) {
-        return selectMenuOption();
-      }
-      query = Queries.add('employee');
+      //wait for user to confirm
+        proceed = await confirm(Menus);
+        if (!proceed) return selectMenuOption();
+      //generate message/query and run query with parsed selections
+      query = Queries.add("employee");
       message = `Added employee ${selections.first_name} ${selections.last_name}`;
       runQuery(query, parseAddEmployee(selections), updateApp, message);
       return;
     case "Add a Role":
+      //get user input
       selections = await inquirer.prompt(Menus.addRole());
-      proceed = await confirm(Menus);
-      if (!proceed) {
-        return selectMenuOption();
-      }
-      query = Queries.add('role');
+      //wait for user to confirm
+        proceed = await confirm(Menus);
+        if (!proceed) return selectMenuOption();
+      //generate message/query and run query with parsed selections
+      query = Queries.add("role");
       message = `Added role ${selections.title}`;
       runQuery(query, parseAddRole(selections), updateApp, message);
       return;
     case "Add a Department":
+      //get user input
       selections = await inquirer.prompt(Menus.addDepartment());
-      proceed = await confirm(Menus);
-      if (!proceed) {
-        return selectMenuOption();
-      }
-      query = Queries.add('department');
+      //wait for user to confirm
+        proceed = await confirm(Menus);
+        if (!proceed) return selectMenuOption();
+      //generate message/query and run query with parsed selections
+      query = Queries.add("department");
       message = `Added department ${selections.name}`;
       runQuery(query, selections, updateApp, message);
       return;
     case "Remove an Employee":
+      //get user input
       selections = await inquirer.prompt(Menus.employeesMenu());
-      proceed = await confirm(Menus);
-      if (!proceed) {
-        return selectMenuOption();
-      }
+      //wait for user to confirm
+        proceed = await confirm(Menus);
+        if (!proceed) return selectMenuOption();
+      //generate message/query and run query with parsed selections
       query = Queries.removeEmployee();
       message = `Removed employee ${selections.employee}`;
       runQuery(query, parseRemoveEmployee(selections), updateApp, message);
       return;
     case "Update Employee Role":
+      //get user input
       selections = await inquirer.prompt(Menus.updateEmployeeRole());
-      proceed = await confirm(Menus);
-      if (!proceed) {
-        return selectMenuOption();
-      }
-      query = Queries.updateEmployee('role_id');
-      message = `Updated employee ${selections.employee} with new role ${selections.role}`
+      //wait for user to confirm
+        proceed = await confirm(Menus);
+        if (!proceed) return selectMenuOption();
+      //generate message/query and run query with parsed selections
+      query = Queries.updateEmployee("role_id");
+      message = `Updated employee ${selections.employee} with new role ${selections.role}`;
       runQuery(query, parseUpdateEmployeeRole(selections), updateApp, message);
       return;
     case "Update Employee Manager":
+      //get user input
       selections = await inquirer.prompt(Menus.updateEmployeeManager());
-      proceed = await confirm(Menus);
-      if (!proceed) {
-        return selectMenuOption();
-      }
-      query = Queries.updateEmployee('manager_id');
+      //wait for user to confirm
+        proceed = await confirm(Menus);
+        if (!proceed) return selectMenuOption();
+      //generate message/query and run query with parsed selections
+      query = Queries.updateEmployee("manager_id");
       message = `Updated employee ${selections.employee} with new manager ${selections.manager}`;
       runQuery(query, parseUpdateEmployeeManager(selections), updateApp, message);
       return;
     case "View Utilized Budget by Department":
+      //pull out department from the prompt response
       const { department: utilDepartment } = await inquirer.prompt(Menus.departmentsMenu());
+      //generate and run query
       query = Queries.getDepartmentBudget();
       runQuery(query, [utilDepartment], selectMenuOption);
       return;
     default:
+      //clear console and close selection
       console.clear();
       connection.end();
       return;
   }
 }
+//------------------------------------------------------------------
 
 //function to run a query
 function runQuery(query, selector, cb, log) {
@@ -145,6 +162,7 @@ function confirm(Menus) {
   return inquirer.prompt(Menus.confirm()).then(res => res.proceed);
 };
 
+//ID Finders---------------------------------------------------------
 //find an employee id from the selected name
 function getEmployeeId(name) {
   return currentEmployees.find(el => el.employee === name).id;
@@ -165,7 +183,9 @@ function getManagerId(name) {
   const manager = currentEmployees.find((el) => el.employee === name);
   return manager ? manager.id : null;
 };
+//-------------------------------------------------------------------
 
+//SELECTOR PARSERS---------------------------------------------------
 //parse add('employee') response into query for connection.query
 function parseAddEmployee(source) {
   //find the matching id for the selected role
@@ -200,7 +220,7 @@ function parseRemoveEmployee(source) {
   return [targetEmployeeId];
 };
 
-//parse updateEmployeeRole response into a selector for connection.query
+//parse updateEmployee('role_id') response into a selector for connection.query
 function parseUpdateEmployeeRole(source) {
   //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
@@ -209,7 +229,7 @@ function parseUpdateEmployeeRole(source) {
   return [newRoleId, targetEmployeeId];
 };
 
-//parse updateEmployeeManager response into a selector for connection.query
+//parse updateEmployee('manager_id) response into a selector for connection.query
 function parseUpdateEmployeeManager(source) {
   //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
@@ -217,8 +237,9 @@ function parseUpdateEmployeeManager(source) {
   const newManagerId = getManagerId(source.manager);
   return [newManagerId, targetEmployeeId];
 };
+//------------------------------------------------------------------------
 
-//UPDATE APP CHAIN--------------------------------------------
+//UPDATE APP CHAIN--------------------------------------------------------
 //function to update app state to current database
 function updateApp() {
   getEmployees();
@@ -256,5 +277,5 @@ function getRoles() {
       selectMenuOption();
     });
 };
-//---------------------------------------------------------
+//------------------------------------------------------------------------
 
