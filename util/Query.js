@@ -37,6 +37,10 @@ class Query {
   removeEmployee() {
     return "DELETE FROM employee WHERE id = ?";
   }
+
+  updateEmployeeRole() {
+    return "UPDATE employee SET role_id = ? WHERE id = ?"
+  }
 }
 
 module.exports = Query;

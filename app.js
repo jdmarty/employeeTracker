@@ -7,7 +7,6 @@ const connection = require("./config/connection");
 
 //utilities
 const Prompt = require("./util/prompts");
-
 const Query = require("./util/Query");
 
 //current employees, departments, and roles
@@ -53,8 +52,7 @@ async function selectMenuOption() {
       return;
     case "Add an Employee":
       const employeeOptions = await inquirer.prompt(Menus.addEmployee());
-      const { proceed: goAddEmp } = await inquirer.prompt(Menus.confirm());
-      if (!goAddEmp) {
+      if (!confirmPrompt()) {
         return selectMenuOption();
       }
       query = Queries.addEmployee();
@@ -85,7 +83,12 @@ async function selectMenuOption() {
       if (!goRemoveEmp) {
         return selectMenuOption();
       }
-      runQuery(query, parseRemoveEmployee(employee), updateApp)
+      runQuery(query, parseRemoveEmployee(employee), updateApp);
+    case "Update Employee Role":
+      const { role: updatedRole } = await inquirer.prompt(Menus.updateEmployeeRole());
+      query = Queries.updateEmployeeRole();
+      const { proceed: goUpdateRole } = await inquirer.prompt(Menus.confirm());
+      return
     default:
       connection.end();
       return;
@@ -123,8 +126,8 @@ function parseAddRole(source) {
 }
 
 //function to parse removeEmployee response in an selector for connection.query
-function parseRemoveEmployee(source) {
-  const targetEmployeeId = currentEmployees.find(el => el.employee === source.employee).id;
+function parseRemoveEmployee(employee) {
+  const targetEmployeeId = currentEmployees.find(el => el.employee === employee).id;
   return [targetEmployeeId];
 }
 
@@ -135,6 +138,13 @@ function runQuery(query, selector, cb) {
     console.log(res);
     if (cb) cb();
   });
+}
+
+//function to run a confirm prompt
+async function confirmPrompt() {
+  const confirmPrompt = new Prompt([],[],[]).confirm();
+  const { proceed } = await inquirer(confirmPrompt);
+  return proceed;
 }
 
 //UPDATE APP CHAIN
@@ -148,6 +158,7 @@ function getEmployees() {
   connection.query(
     "SELECT CONCAT(first_name,' ',last_name) AS employee, id FROM employee",
     (err, res) => {
+      if (err) throw err;
       currentEmployees = res;
       getDepartments()
     }
@@ -159,6 +170,7 @@ function getDepartments() {
   connection.query(
     "SELECT name AS department, id FROM department;",
     (err, res) => {
+      if (err) throw err;
       currentDepartments = res;
       getRoles()
     }
@@ -170,6 +182,7 @@ function getRoles() {
   connection.query(
     "SELECT title AS role, id FROM role;",
     (err, res) => {
+      if (err) throw err;
       currentRoles = res;
       selectMenuOption()
     }

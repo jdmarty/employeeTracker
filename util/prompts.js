@@ -140,6 +140,23 @@ class Prompt {
       }
     ]
   }
+
+  updateEmployeeRole() {
+    return [
+      {
+        name: "employee",
+        type: "list",
+        message: "Select an employee to update",
+        choices: this.employees,
+      },
+      {
+        name: "role",
+        type: "list",
+        message: "Select a new role for this employee",
+        choices: this.roles
+      }
+    ];
+  }
 }
 
 module.exports = Prompt;
