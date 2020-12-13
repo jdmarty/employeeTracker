@@ -72,7 +72,6 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       runQuery(query, parseAddRole(roleOptions), updateApp);
-      selectMenuOption();
       return;
     case "Add a Department":
       const deptOptions = await inquirer.prompt(Menus.addDepartment());
@@ -92,11 +91,11 @@ async function selectMenuOption() {
 //function to parse addEmployee response into query for connection.query
 function parseAddEmployee(source) {
   //find the matching id for the selected role
-  let newRoleId = currentRoles.find((el) => el.role === source.role).roleId;
-  if (!newRoleId) newRoleId = null;
+  const newRole = currentRoles.find((el) => el.role === source.role);
+  const newRoleId = newRole ? newRole.id : null;
   //find matching id for selected manager
-  let newManagerId = currentEmployees.find((el) => el.employee === source.manager).employeeId;
-  if (!newManagerId) newManagerId = null;
+  const newManager = currentEmployees.find((el) => el.employee === source.manager);
+  const newManagerId = newManager ? newManager.id : null;
   //return object to be used as selector in connection.query
   return {
     first_name: source.first_name,
@@ -109,8 +108,8 @@ function parseAddEmployee(source) {
 //function to parse addRole response into an object for connection.query
 function parseAddRole(source) {
   //find the matching id for the selected department
-  let newDeptId = currentDepartments.findIndex((el) => el === source.department) + 1;
-  if (newDeptId === 0) newDeptId = null;
+  const newDept = currentDepartments.find((el) => el.department === source.department);
+  const newDeptId = newDept ? newDept.id : null;
   //return object to be used as selector in connection.query
   return {
     title: source.title,
@@ -137,7 +136,7 @@ function updateApp() {
 //function to get all employees currently in the database
 function getEmployees() {
   connection.query(
-    "SELECT CONCAT(first_name,' ',last_name) AS employee, id AS employeeId FROM employee",
+    "SELECT CONCAT(first_name,' ',last_name) AS employee, id FROM employee",
     (err, res) => {
       currentEmployees = res;
       getDepartments()
@@ -148,7 +147,7 @@ function getEmployees() {
 //function to get all departments currently in the database
 function getDepartments() {
   connection.query(
-    "SELECT name AS department, id AS departmentId FROM department;",
+    "SELECT name AS department, id FROM department;",
     (err, res) => {
       currentDepartments = res;
       getRoles()
@@ -159,7 +158,7 @@ function getDepartments() {
 //function to get all roles currently in the database
 function getRoles() {
   connection.query(
-    "SELECT title AS role, id AS roleId FROM role;",
+    "SELECT title AS role, id FROM role;",
     (err, res) => {
       currentRoles = res;
       selectMenuOption()

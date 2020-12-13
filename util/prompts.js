@@ -94,7 +94,7 @@ class Prompt {
         name: "manager",
         type: "list",
         message: "Select a manager",
-        choices: this.employees,
+        choices: this.employees.concat(['None']),
       },
     ];
   }
@@ -108,9 +108,8 @@ class Prompt {
       },
       {
         name: "salary",
-        type: "input",
+        type: "number",
         message: "Enter salary for this position",
-        validate: (val) => parseFloat(val) !== NaN,
       },
       {
         name: "department",
@@ -126,7 +125,7 @@ class Prompt {
       {
         name: "name",
         type: "input",
-        message: "Enter new role title"
+        message: "Enter new department name"
       },
     ]
   }
