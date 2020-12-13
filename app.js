@@ -18,7 +18,7 @@ let currentRoles = [];
 connection.connect((err) => {
   if (err) throw err;
   // console.log("connected as id " + connection.threadId + "\n");
-  console.log("\nWelcome to Node Employee Tracking\n");
+  console.log("\nWelcome to Node Employee Tracking");
   updateApp();
 });
 
@@ -28,6 +28,7 @@ async function selectMenuOption() {
   const Menus = new Prompt(currentEmployees, currentDepartments, currentRoles);
   const Queries = new Query();
   //Pull out the menu selection for switchboard
+  console.log('\n');
   const { main } = await inquirer.prompt(Menus.mainMenu());
   let query, selections, proceed, message
   //Switchboard for main menu
@@ -38,17 +39,17 @@ async function selectMenuOption() {
       return;
     case "View Employees by Department":
       const { department } = await inquirer.prompt(Menus.departmentsMenu());
-      query = Queries.searchByDepartment();
+      query = Queries.searchBy('department.name');
       runQuery(query, [department], selectMenuOption);
       return;
     case "View Employees by Role":
       const { role } = await inquirer.prompt(Menus.rolesMenu());
-      query = Queries.searchByRole();
+      query = Queries.searchBy('role.title');
       runQuery(query, [role], selectMenuOption);
       return;
     case "View Employees by Manager":
       const { manager } = await inquirer.prompt(Menus.managersMenu());
-      query = Queries.searchByManager();
+      query = Queries.searchBy("CONCAT(m.first_name,' ',m.last_name)");
       runQuery(query, [manager], selectMenuOption);
       return;
     case "Add an Employee":

@@ -10,16 +10,8 @@ class Query {
     );
   }
 
-  searchByDepartment() {
-    return this.searchAll() + " WHERE department.name = ?";
-  }
-
-  searchByRole() {
-    return this.searchAll() + " WHERE role.title = ?";
-  }
-
-  searchByManager() {
-    return this.searchAll() + " WHERE CONCAT(m.first_name,' ',m.last_name) = ?";
+  searchBy(column) {
+    return this.searchAll() + ` WHERE ${column} = ?`;
   }
 
   add(table) {
