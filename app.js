@@ -1,6 +1,5 @@
 //npm packages
 const inquirer = require("inquirer");
-const mysql = require("mysql");
 
 //connection module
 const connection = require("./config/connection");
@@ -111,10 +110,20 @@ async function selectMenuOption() {
       runQuery(query, [utilDepartment], selectMenuOption);
       return;
     default:
+      console.clear();
       connection.end();
       return;
   }
 }
+
+//function to run a query
+function runQuery(query, selector, cb) {
+  connection.query(query, selector, (err, res) => {
+    if (err) console.log(err.sqlMessage);
+    if (res.length) console.table(res);
+    if (cb) cb();
+  });
+};
 
 //run a confirm prompt
 function confirm(Menus) {
@@ -148,7 +157,6 @@ function parseAddEmployee(source) {
   const newRoleId = getRoleId(source.role)
   //find the matching id for the selected manager
   const newManagerId = getManagerId(source.manager);
-  console.log(newManagerId);
   //return object to be used as selector in connection.query
   return {
     first_name: source.first_name,
@@ -177,7 +185,7 @@ function parseRemoveEmployee(source) {
   return [targetEmployeeId];
 };
 
-//function to parse updateEmployeeRole response into a selector for connection.query
+//parse updateEmployeeRole response into a selector for connection.query
 function parseUpdateEmployeeRole(source) {
   //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
@@ -186,22 +194,13 @@ function parseUpdateEmployeeRole(source) {
   return [newRoleId, targetEmployeeId];
 };
 
-//function to parse updateEmployeeManager response into a selector for connection.query
+//parse updateEmployeeManager response into a selector for connection.query
 function parseUpdateEmployeeManager(source) {
   //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
   //find the matching id for the selected manager
   const newManagerId = getManagerId(source.manager);
   return [newManagerId, targetEmployeeId];
-};
-
-//function to run a query
-function runQuery(query, selector, cb) {
-  connection.query(query, selector, (err, res) => {
-    if (err) throw err;
-    console.log(res);
-    if (cb) cb();
-  });
 };
 
 //UPDATE APP CHAIN--------------------------------------------

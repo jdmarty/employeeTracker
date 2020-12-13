@@ -36,7 +36,7 @@ class Query {
 
   getDepartmentBudget() {
     return (
-      "SELECT SUM(role.salary) AS utilizedBudget" +
+      "SELECT SUM(role.salary) AS utilizedBudget " +
       "FROM employee " +
       "INNER JOIN role ON employee.role_id = role.id " +
       "INNER JOIN department ON role.department_id = department.id " +
