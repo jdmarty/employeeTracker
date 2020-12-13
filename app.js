@@ -31,8 +31,9 @@ connection.connect((err) => {
         return;
     }
     console.log(data);
-});
-  updateApp();
+    //then start the update procedure
+    updateApp()
+  })
 });
 
 //MAIN MENU SWITCHBOARD---------------------------------------------------------

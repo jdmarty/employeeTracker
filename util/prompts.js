@@ -78,7 +78,7 @@ class Prompt {
       {
         name: "proceed",
         type: "confirm",
-        message: "\nDoes the above information look correct?",
+        message: "Does the above information look correct?",
       },
     ];
   }
