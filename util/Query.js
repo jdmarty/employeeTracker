@@ -33,6 +33,10 @@ class Query {
   addDepartment() {
     return "INSERT INTO department SET ?";
   }
+
+  removeEmployee() {
+    return "DELETE FROM employee WHERE id = ?";
+  }
 }
 
 module.exports = Query;

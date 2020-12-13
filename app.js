@@ -25,10 +25,6 @@ connection.connect((err) => {
 
 //main menu switchboard
 async function selectMenuOption() {
-  //update app state
-  // getEmployees();
-  // getDepartments();
-  // getRoles();
   //create Menus and Query classes
   const Menus = new Prompt(currentEmployees, currentDepartments, currentRoles);
   const Queries = new Query();
@@ -38,17 +34,17 @@ async function selectMenuOption() {
   switch (main) {
     case "View All Employees":
       query = Queries.searchAll();
-      runQuery(query, null, updateApp);
+      runQuery(query, null, selectMenuOption);
       return;
     case "View Employees by Department":
       const { department } = await inquirer.prompt(Menus.departmentsMenu());
       query = Queries.searchByDepartment();
-      runQuery(query, [department], updateApp);
+      runQuery(query, [department], selectMenuOption);
       return;
     case "View Employees by Role":
       const { role } = await inquirer.prompt(Menus.rolesMenu());
       query = Queries.searchByRole();
-      runQuery(query, [role], updateApp);
+      runQuery(query, [role], selectMenuOption);
       return;
     case "View Employees by Manager":
       const { manager } = await inquirer.prompt(Menus.managersMenu());
@@ -57,7 +53,7 @@ async function selectMenuOption() {
       return;
     case "Add an Employee":
       const employeeOptions = await inquirer.prompt(Menus.addEmployee());
-      const { proceed: goAddEmp } = await inquirer.prompt(Menus.confirmAdd());
+      const { proceed: goAddEmp } = await inquirer.prompt(Menus.confirm());
       if (!goAddEmp) {
         return selectMenuOption();
       }
@@ -67,7 +63,7 @@ async function selectMenuOption() {
     case "Add a Role":
       const roleOptions = await inquirer.prompt(Menus.addRole());
       query = Queries.addRole();
-      const { proceed: goAddRole } = await inquirer.prompt(Menus.confirmAdd());
+      const { proceed: goAddRole } = await inquirer.prompt(Menus.confirm());
       if (!goAddRole) {
         return selectMenuOption();
       }
@@ -76,12 +72,20 @@ async function selectMenuOption() {
     case "Add a Department":
       const deptOptions = await inquirer.prompt(Menus.addDepartment());
       query = Queries.addDepartment();
-      const { proceed: goAddDept } = await inquirer.prompt(Menus.confirmAdd());
+      const { proceed: goAddDept } = await inquirer.prompt(Menus.confirm());
       if (!goAddDept) {
         return selectMenuOption();
       }
       runQuery(query, deptOptions, updateApp);
       return
+    case "Remove an Employee":
+      const { employee } = await inquirer.prompt(Menus.removeEmployee());
+      query = Queries.removeEmployee();
+      const { proceed: goRemoveEmp } = await inquirer.prompt(Menus.confirm());
+      if (!goRemoveEmp) {
+        return selectMenuOption();
+      }
+      runQuery(query, parseRemoveEmployee(employee), updateApp)
     default:
       connection.end();
       return;
@@ -116,6 +120,12 @@ function parseAddRole(source) {
     salary: source.salary,
     department_id: newDeptId,
   };
+}
+
+//function to parse removeEmployee response in an selector for connection.query
+function parseRemoveEmployee(source) {
+  const targetEmployeeId = currentEmployees.find(el => el.employee === source.employee).id;
+  return [targetEmployeeId];
 }
 
 //function to run a basic query
@@ -165,4 +175,5 @@ function getRoles() {
     }
   );
 }
+//----------------------------------------------------
 

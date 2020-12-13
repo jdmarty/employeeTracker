@@ -62,7 +62,7 @@ class Prompt {
     ];
   }
 
-  confirmAdd() {
+  confirm() {
     return [
       {
         name: "proceed",
@@ -127,6 +127,17 @@ class Prompt {
         type: "input",
         message: "Enter new department name"
       },
+    ]
+  }
+
+  removeEmployee() {
+    return [
+      {
+        name: "employee",
+        type: "list",
+        message: "Select an employee to remove",
+        choices: this.employees
+      }
     ]
   }
 }
