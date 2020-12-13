@@ -14,24 +14,12 @@ class Query {
     return this.searchAll() + " WHERE department.name = ?";
   }
 
-  searchByRole(selector) {
+  searchByRole() {
     return this.searchAll() + " WHERE role.title = ?";
   }
 
-  searchByManager(selector) {
+  searchByManager() {
     return this.searchAll() + " WHERE CONCAT(m.first_name,' ',m.last_name) = ?";
-  }
-
-  addEmployee() {
-    return "INSERT INTO employee SET ?";
-  }
-
-  addRole() {
-      return "INSERT INTO role SET ?";
-  }
-
-  addDepartment() {
-    return "INSERT INTO department SET ?";
   }
 
   add(table) {
@@ -42,12 +30,8 @@ class Query {
     return "DELETE FROM employee WHERE id = ?";
   }
 
-  updateEmployeeRole() {
-    return "UPDATE employee SET role_id = ? WHERE id = ?"
-  }
-
-  updateEmployeeManager() {
-    return "UPDATE employee SET manager_id = ? WHERE id = ?"
+  updateEmployee(column) {
+    return `UPDATE employee SET ${column} = ? WHERE id = ?`
   }
 
   getDepartmentBudget() {

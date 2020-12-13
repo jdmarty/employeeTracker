@@ -93,7 +93,7 @@ async function selectMenuOption() {
       if (!proceed) {
         return selectMenuOption();
       }
-      query = Queries.updateEmployeeRole();
+      query = Queries.updateEmployee('role_id');
       runQuery(query, parseUpdateEmployeeRole(selections), updateApp);
       return;
     case "Update Employee Manager":
@@ -102,7 +102,7 @@ async function selectMenuOption() {
       if (!proceed) {
         return selectMenuOption();
       }
-      query = Queries.updateEmployeeManager();
+      query = Queries.updateEmployee('manager_id');
       runQuery(query, parseUpdateEmployeeManager(selections), updateApp);
       return;
     case "View Utilized Budget by Department":
