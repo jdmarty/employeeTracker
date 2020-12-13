@@ -1,6 +1,7 @@
 //npm packages
 const inquirer = require("inquirer");
 const chalk = require("chalk");
+const figlet = require("figlet");
 
 //connection module
 const connection = require("./config/connection");
@@ -14,11 +15,23 @@ let currentEmployees = [];
 let currentDepartments = [];
 let currentRoles = [];
 
-//On connection run the function to bring up the main menu
+//On connection run the function to get the most recent data from db
 connection.connect((err) => {
   if (err) throw err;
-  // console.log("connected as id " + connection.threadId + "\n");
-  console.log("\nWelcome to Node Employee Tracking");
+  // Log welcome message
+  figlet.text('Welcome to Node Employee Tracking!', {
+    horizontalLayout: 'default',
+    verticalLayout: 'default',
+    width: 80,
+    whitespaceBreak: true
+  }, function(err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(data);
+});
   updateApp();
 });
 
@@ -141,7 +154,7 @@ async function selectMenuOption() {
 }
 //------------------------------------------------------------------
 
-//function to run a query
+//function to run a query and generate a table or message
 function runQuery(query, selector, cb, log) {
   connection.query(query, selector, (err, res) => {
     //Log error message

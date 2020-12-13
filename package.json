@@ -4,7 +4,8 @@
   "description": "Command line application that tracks employees by department, role, manager, and salary",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
     "chalk": "^4.1.0",
     "console.table": "^0.10.0",
     "dotenv": "^8.2.0",
+    "figlet": "^1.5.0",
     "inquirer": "^7.3.3",
     "mysql": "^2.18.1",
     "save": "^2.4.0"
