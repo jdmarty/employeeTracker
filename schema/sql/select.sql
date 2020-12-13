@@ -30,7 +30,7 @@ LEFT JOIN employee m ON e.manager_id = m.id
 WHERE role.title = 'Line Leader'
 
 -- Select sum of salaries by department
-SELECT SUM(role.salary)
+SELECT department.name, SUM(role.salary)
 FROM employee
 INNER JOIN role ON employee.role_id = role.id
 INNER JOIN department ON role.department_id = department.id
