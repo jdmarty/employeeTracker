@@ -152,8 +152,8 @@ function runQuery(query, selector, cb, log) {
       //log message if one is provided
       if (log) console.log(chalk.green('\n'+log));
     }
-    // run the call back message if one is provided
-    if (cb) cb();
+    // run the provided callback
+    cb();
   });
 };
 
