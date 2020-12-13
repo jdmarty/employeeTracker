@@ -10,7 +10,7 @@ node_modules/
 *.exe
 *.o
 *.so
-
+*.env
 *.so
 
 # Packages #
