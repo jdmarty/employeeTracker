@@ -1,5 +1,6 @@
 //npm packages
 const inquirer = require("inquirer");
+const chalk = require("chalk");
 
 //connection module
 const connection = require("./config/connection");
@@ -28,7 +29,7 @@ async function selectMenuOption() {
   const Queries = new Query();
   //Pull out the menu selection for switchboard
   const { main } = await inquirer.prompt(Menus.mainMenu());
-  let query, selections, proceed
+  let query, selections, proceed, message
   //Switchboard for main menu
   switch (main) {
     case "View All Employees":
@@ -57,7 +58,8 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.add('employee');
-      runQuery(query, parseAddEmployee(selections), updateApp);
+      message = `Added employee ${selections.first_name} ${selections.last_name}`;
+      runQuery(query, parseAddEmployee(selections), updateApp, message);
       return;
     case "Add a Role":
       selections = await inquirer.prompt(Menus.addRole());
@@ -66,7 +68,8 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.add('role');
-      runQuery(query, parseAddRole(selections), updateApp);
+      message = `Added role ${selections.role}`;
+      runQuery(query, parseAddRole(selections), updateApp, message);
       return;
     case "Add a Department":
       selections = await inquirer.prompt(Menus.addDepartment());
@@ -75,7 +78,8 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.add('department');
-      runQuery(query, selections, updateApp);
+      message = `Added department ${selections.name}`;
+      runQuery(query, selections, updateApp, message);
       return;
     case "Remove an Employee":
       selection = await inquirer.prompt(Menus.employeesMenu());
@@ -84,7 +88,8 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.removeEmployee();
-      runQuery(query, parseRemoveEmployee(selection), updateApp);
+      message = `Removed employee ${selections.first_name} ${selections.last_name}`;
+      runQuery(query, parseRemoveEmployee(selection), updateApp, message);
       return;
     case "Update Employee Role":
       selections = await inquirer.prompt(Menus.updateEmployeeRole());
@@ -93,7 +98,8 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.updateEmployee('role_id');
-      runQuery(query, parseUpdateEmployeeRole(selections), updateApp);
+      message = `Updated employee ${selections.employee} with new role ${selections.role}`
+      runQuery(query, parseUpdateEmployeeRole(selections), updateApp, message);
       return;
     case "Update Employee Manager":
       selections = await inquirer.prompt(Menus.updateEmployeeManager());
@@ -102,7 +108,8 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.updateEmployee('manager_id');
-      runQuery(query, parseUpdateEmployeeManager(selections), updateApp);
+      message = `Updated employee ${selections.employee} with new manager ${selections.manager}`;
+      runQuery(query, parseUpdateEmployeeManager(selections), updateApp, message);
       return;
     case "View Utilized Budget by Department":
       const { department: utilDepartment } = await inquirer.prompt(Menus.departmentsMenu());
@@ -117,10 +124,17 @@ async function selectMenuOption() {
 }
 
 //function to run a query
-function runQuery(query, selector, cb) {
+function runQuery(query, selector, cb, log) {
   connection.query(query, selector, (err, res) => {
-    if (err) console.log(err.sqlMessage);
-    if (res.length) console.table(res);
+    //Log error message
+    if (err) console.log(chalk.red('\n'+err.sqlMessage+'\n'));
+    else {
+      //Generate a table if an array is sent
+      if (res.length) console.table(res);
+      //log message if one is provided
+      if (log) console.log(chalk.green('\n'+log+'\n'));
+    }
+    // run the call back message if one is provided
     if (cb) cb();
   });
 };
