@@ -10,7 +10,7 @@ class Prompt {
       {
         name: "main",
         type: "list",
-        message: "What would you like to do?",
+        message: "\nWhat would you like to do?",
         choices: [
           "View All Employees",
           "View Employees by Department",

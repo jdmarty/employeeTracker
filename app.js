@@ -68,7 +68,7 @@ async function selectMenuOption() {
         return selectMenuOption();
       }
       query = Queries.add('role');
-      message = `Added role ${selections.role}`;
+      message = `Added role ${selections.title}`;
       runQuery(query, parseAddRole(selections), updateApp, message);
       return;
     case "Add a Department":
@@ -82,14 +82,14 @@ async function selectMenuOption() {
       runQuery(query, selections, updateApp, message);
       return;
     case "Remove an Employee":
-      selection = await inquirer.prompt(Menus.employeesMenu());
+      selections = await inquirer.prompt(Menus.employeesMenu());
       proceed = await confirm(Menus);
       if (!proceed) {
         return selectMenuOption();
       }
       query = Queries.removeEmployee();
-      message = `Removed employee ${selections.first_name} ${selections.last_name}`;
-      runQuery(query, parseRemoveEmployee(selection), updateApp, message);
+      message = `Removed employee ${selections.employee}`;
+      runQuery(query, parseRemoveEmployee(selections), updateApp, message);
       return;
     case "Update Employee Role":
       selections = await inquirer.prompt(Menus.updateEmployeeRole());
