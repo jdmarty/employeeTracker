@@ -49,18 +49,21 @@ async function selectMenuOption() {
     case "View Employees by Manager":
       const { manager } = await inquirer.prompt(Menus.managersMenu());
       query = Queries.searchByManager();
-      runQuery(query, [manager], updateApp);
+      runQuery(query, [manager], selectMenuOption);
       return;
     case "Add an Employee":
       selections = await inquirer.prompt(Menus.addEmployee());
-      await confirm(Menus);
+      proceed = await confirm(Menus);
+      if (!proceed) {
+        return selectMenuOption();
+      }
       query = Queries.add('employee');
       runQuery(query, parseAddEmployee(selections), updateApp);
       return;
     case "Add a Role":
       selections = await inquirer.prompt(Menus.addRole());
-      const { proceed: goAddRole } = await inquirer.prompt(Menus.confirm());
-      if (!goAddRole) {
+      proceed = await confirm(Menus);
+      if (!proceed) {
         return selectMenuOption();
       }
       query = Queries.add('role');
@@ -68,8 +71,8 @@ async function selectMenuOption() {
       return;
     case "Add a Department":
       selections = await inquirer.prompt(Menus.addDepartment());
-      const { proceed: goAddDept } = await inquirer.prompt(Menus.confirm());
-      if (!goAddDept) {
+      proceed = await confirm(Menus);
+      if (!proceed) {
         return selectMenuOption();
       }
       query = Queries.add('department');
@@ -77,8 +80,8 @@ async function selectMenuOption() {
       return;
     case "Remove an Employee":
       selection = await inquirer.prompt(Menus.employeesMenu());
-      const { proceed: goRemoveEmp } = await inquirer.prompt(Menus.confirm());
-      if (!goRemoveEmp) {
+      proceed = await confirm(Menus);
+      if (!proceed) {
         return selectMenuOption();
       }
       query = Queries.removeEmployee();
@@ -86,8 +89,8 @@ async function selectMenuOption() {
       return;
     case "Update Employee Role":
       selections = await inquirer.prompt(Menus.updateEmployeeRole());
-      const { proceed: goUpdateRole } = await inquirer.prompt(Menus.confirm());
-      if (!goUpdateRole) {
+      proceed = await confirm(Menus);
+      if (!proceed) {
         return selectMenuOption();
       }
       query = Queries.updateEmployeeRole();
@@ -95,8 +98,8 @@ async function selectMenuOption() {
       return;
     case "Update Employee Manager":
       selections = await inquirer.prompt(Menus.updateEmployeeManager());
-      const { proceed: goUpdateManager } = await inquirer.prompt(Menus.confirm());
-      if (!goUpdateManager) {
+      proceed = await confirm(Menus);
+      if (!proceed) {
         return selectMenuOption();
       }
       query = Queries.updateEmployeeManager();
@@ -115,10 +118,7 @@ async function selectMenuOption() {
 
 //run a confirm prompt
 function confirm(Menus) {
-  return inquirer.prompt(Menus.confirm()).then(res => {
-    //if not confirmed, return to the main menu
-    return !res.proceed && selectMenuOption(); 
-  });
+  return inquirer.prompt(Menus.confirm()).then(res => res.proceed)
 }
 
 //find an employee id from the selected name
@@ -179,14 +179,18 @@ function parseRemoveEmployee(source) {
 
 //function to parse updateEmployeeRole response into a selector for connection.query
 function parseUpdateEmployeeRole(source) {
+  //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
+  //find the matching id for the selected role
   const newRoleId = getRoleId(source.role);
   return [newRoleId, targetEmployeeId];
 }
 
 //function to parse updateEmployeeManager response into a selector for connection.query
 function parseUpdateEmployeeManager(source) {
+  //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
+  //find the matching id for the selected manager
   const newManagerId = getManagerId(source.manager);
   return [newManagerId, targetEmployeeId];
 }
