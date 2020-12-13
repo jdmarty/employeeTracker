@@ -45,6 +45,16 @@ class Query {
   updateEmployeeManager() {
     return "UPDATE employee SET manager_id = ? WHERE id = ?"
   }
+
+  getDepartmentBudget() {
+    return (
+      "SELECT SUM(role.salary) AS utilizedBudget" +
+      "FROM employee " +
+      "INNER JOIN role ON employee.role_id = role.id " +
+      "INNER JOIN department ON role.department_id = department.id " +
+      "WHERE department.name = ? "
+    );
+  }
 }
 
 module.exports = Query;

@@ -105,8 +105,10 @@ async function selectMenuOption() {
       runQuery(query, parseUpdateEmployeeManager(employeeUpdateManagerOptions), updateApp);
       return;
     case "View Utilized Budget by Department":
-      const { department: departmentBudget } = await inquirer.prompt(Menus.departmentsMenu());
-      return
+      const { department: utilDepartment } = await inquirer.prompt(Menus.departmentsMenu());
+      query = Queries.getDepartmentBudget();
+      runQuery(query, [utilDepartment], selectMenuOption);
+      return;
     default:
       connection.end();
       return;
