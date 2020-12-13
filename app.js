@@ -118,29 +118,29 @@ async function selectMenuOption() {
 
 //run a confirm prompt
 function confirm(Menus) {
-  return inquirer.prompt(Menus.confirm()).then(res => res.proceed)
-}
+  return inquirer.prompt(Menus.confirm()).then(res => res.proceed);
+};
 
 //find an employee id from the selected name
 function getEmployeeId(name) {
   return currentEmployees.find(el => el.employee === name).id;
-}
+};
 
 //find a role id from the selected name
 function getRoleId(name) {
   return currentRoles.find(el => el.role === name).id;
-}
+};
 
 //find a department id from the selected name
 function getDeptId(name) {
   return currentDepartments.find(el => el.department === name).id;
-}
+};
 
 //find a manager id from the selected name
 function getManagerId(name) {
   const manager = currentEmployees.find((el) => el.employee === name);
   return manager ? manager.id : null;
-}
+};
 
 //parse add('employee') response into query for connection.query
 function parseAddEmployee(source) {
@@ -156,7 +156,7 @@ function parseAddEmployee(source) {
     role_id: newRoleId,
     manager_id: newManagerId,
   };
-}
+};
 
 //parse add('role') response into an object for connection.query
 function parseAddRole(source) {
@@ -168,14 +168,14 @@ function parseAddRole(source) {
     salary: source.salary,
     department_id: newDeptId,
   };
-}
+};
 
 //parse removeEmployee response into a selector for connection.query
 function parseRemoveEmployee(source) {
   //find the matching id for the selected employee
   const targetEmployeeId = getEmployeeId(source.employee);
   return [targetEmployeeId];
-}
+};
 
 //function to parse updateEmployeeRole response into a selector for connection.query
 function parseUpdateEmployeeRole(source) {
@@ -184,7 +184,7 @@ function parseUpdateEmployeeRole(source) {
   //find the matching id for the selected role
   const newRoleId = getRoleId(source.role);
   return [newRoleId, targetEmployeeId];
-}
+};
 
 //function to parse updateEmployeeManager response into a selector for connection.query
 function parseUpdateEmployeeManager(source) {
@@ -193,7 +193,7 @@ function parseUpdateEmployeeManager(source) {
   //find the matching id for the selected manager
   const newManagerId = getManagerId(source.manager);
   return [newManagerId, targetEmployeeId];
-}
+};
 
 //function to run a query
 function runQuery(query, selector, cb) {
@@ -202,13 +202,13 @@ function runQuery(query, selector, cb) {
     console.log(res);
     if (cb) cb();
   });
-}
+};
 
 //UPDATE APP CHAIN--------------------------------------------
 //function to update app state to current database
 function updateApp() {
-  getEmployees()
-}
+  getEmployees();
+};
 
 //function to get all employees currently in the database
 function getEmployees() {
@@ -217,10 +217,9 @@ function getEmployees() {
     (err, res) => {
       if (err) throw err;
       currentEmployees = res;
-      getDepartments()
-    }
-  );
-}
+      getDepartments();
+    });
+};
 
 //function to get all departments currently in the database
 function getDepartments() {
@@ -229,10 +228,9 @@ function getDepartments() {
     (err, res) => {
       if (err) throw err;
       currentDepartments = res;
-      getRoles()
-    }
-  );
-}
+      getRoles();
+    });
+};
 
 //function to get all roles currently in the database
 function getRoles() {
@@ -241,9 +239,8 @@ function getRoles() {
     (err, res) => {
       if (err) throw err;
       currentRoles = res;
-      selectMenuOption()
-    }
-  );
-}
+      selectMenuOption();
+    });
+};
 //---------------------------------------------------------
 
