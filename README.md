@@ -4,7 +4,7 @@
 - [Respository](https://github.com/jdmarty/employeeTracker)
 - [Demonstration](https://drive.google.com/file/d/1E-85fHsOSyAot6CCjN1YBDAZ50Ncp7BX/view?usp=sharing)
 
-![Employee Tracker App](https://github.com/jdmarty/employeeTracker/blob/main/Assets/employee-tracker.gif)
+![Employee Tracker App]()
 
 ## Description
 
