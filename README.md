@@ -4,6 +4,8 @@
 - [Respository](https://github.com/jdmarty/employeeTracker)
 - [Demonstration](https://drive.google.com/file/d/1E-85fHsOSyAot6CCjN1YBDAZ50Ncp7BX/view?usp=sharing)
 
+![Employee Tracker App](https://github.com/jdmarty/employeeTracker/blob/main/Assets/employee-tracker.gif)
+
 ## Description
 
 This node based command line application connects to a database of employees, departments, and roles and allows the user to view employees by department, role, and manager, add new employees, roles, and departments, update employees, remove employees, and view budget utilization metrics
